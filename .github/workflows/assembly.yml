@@ -54,6 +54,10 @@ jobs:
       - name: Create invoice
         run: echo "Invoice for car" > build/invoice_car.txt
 
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
+
       - name: Upload car artifact
         uses: actions/upload-artifact@v6
         with:
@@ -62,10 +66,6 @@ jobs:
             build/car.txt
             build/spare_parts_car.txt
           retention-days: 1
-
-      - name: Print assembly plant
-        run: |
-          echo "Assembling at: $ASSEMBLY_PLANT"
 
   build_motorbike:
     needs: start
@@ -87,6 +87,10 @@ jobs:
       - name: Create invoice
         run: echo "Invoice for motorbike" > build/invoice_motorbike.txt
 
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
+
       - name: Upload motorbike artifact
         uses: actions/upload-artifact@v6
         with:
@@ -95,10 +99,6 @@ jobs:
             build/motorbike.txt
             build/spare_parts_motorbike.txt
           retention-days: 1
-
-      - name: Print assembly plant
-        run: |
-          echo "Assembling at: $ASSEMBLY_PLANT"
 
   build_truck:
     needs: start
@@ -119,6 +119,10 @@ jobs:
       - name: Create invoice
         run: echo "Invoice for truck" > build/invoice_truck.txt
 
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
+
       - name: Upload truck artifact
         uses: actions/upload-artifact@v6
         with:
@@ -127,10 +131,6 @@ jobs:
             build/truck.txt
             build/spare_parts_truck.txt
           retention-days: 1
-
-      - name: Print assembly plant
-        run: |
-          echo "Assembling at: $ASSEMBLY_PLANT"
 
   test_car:
     needs: build_car
@@ -223,6 +223,8 @@ jobs:
           echo "| Motorbike | motorbike.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
           echo "| Truck | truck.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
 
+
+
       - name: Print run metadata
         run: |
           echo "Workflow: ${{ github.workflow }}"
@@ -230,7 +232,6 @@ jobs:
           echo "Triggered by: ${{ github.actor }}"
           echo "Branch: ${{ github.ref_name }}"
           echo "Event: ${{ github.event_name }}"
-
   deploy_car:
     needs: test_car
     runs-on: ubuntu-latest
@@ -260,13 +261,6 @@ jobs:
           name: car-files-failure
           path: build/car.txt
           retention-days: 3
-
-      - name: Authenticate deployment
-        env:
-          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-        run: |
-          echo "Authenticating with token: $TOKEN"
-          echo "Token length: ${#TOKEN}"
 
       - name: Deployment complete
         if: always()
@@ -302,13 +296,6 @@ jobs:
           path: build/motorbike.txt
           retention-days: 3
 
-      - name: Authenticate deployment
-        env:
-          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-        run: |
-          echo "Authenticating with token: $TOKEN"
-          echo "Token length: ${#TOKEN}"
-
       - name: Deployment complete
         if: always()
         run: echo "Deployment attempt complete for motorbike"
@@ -342,13 +329,6 @@ jobs:
           name: truck-files-failure
           path: build/truck.txt
           retention-days: 3
-
-      - name: Authenticate deployment
-        env:
-          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-        run: |
-          echo "Authenticating with token: $TOKEN"
-          echo "Token length: ${#TOKEN}"
 
       - name: Deployment complete
         if: always()
