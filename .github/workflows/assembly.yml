@@ -221,6 +221,13 @@ jobs:
           path: build/car.txt
           retention-days: 3
 
+      - name: Authenticate deployment
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Authenticating with token: $TOKEN"
+          echo "Token length: ${#TOKEN}"
+
       - name: Deployment complete
         if: always()
         run: echo "Deployment attempt complete for car"
@@ -248,6 +255,13 @@ jobs:
           path: build/motorbike.txt
           retention-days: 3
 
+      - name: Authenticate deployment
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Authenticating with token: $TOKEN"
+          echo "Token length: ${#TOKEN}"
+
       - name: Deployment complete
         if: always()
         run: echo "Deployment attempt complete for motorbike"
@@ -274,6 +288,13 @@ jobs:
           name: truck-files-failure
           path: build/truck.txt
           retention-days: 3
+
+      - name: Authenticate deployment
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Authenticating with token: $TOKEN"
+          echo "Token length: ${#TOKEN}"
 
       - name: Deployment complete
         if: always()
