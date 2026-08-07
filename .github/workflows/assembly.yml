@@ -333,3 +333,4 @@ jobs:
       - name: Deployment complete
         if: always()
         run: echo "Deployment attempt complete for truck"
+        
