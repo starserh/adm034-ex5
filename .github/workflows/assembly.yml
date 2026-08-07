@@ -21,6 +21,10 @@ jobs:
       - name: Print start message
         run: echo "Starting assembly of the vehicles"
 
+      - name: Write version to summary
+        run: |
+          echo "App Version: ${{ vars.APP_VERSION }}" >> $GITHUB_STEP_SUMMARY
+
   build_car:
     needs: start
     runs-on: ubuntu-latest
