@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  ASSEMBLY_PLANT: "Factory A"
+
 jobs:
   start:
     runs-on: ubuntu-latest
@@ -25,9 +28,15 @@ jobs:
         run: |
           echo "App Version: ${{ vars.APP_VERSION }}" >> $GITHUB_STEP_SUMMARY
 
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
+
   build_car:
     needs: start
     runs-on: ubuntu-latest
+    env:
+      ASSEMBLY_PLANT: "Factory B"
     container: ubuntu:22.04
     steps:
       - name: Assemble car
@@ -53,6 +62,10 @@ jobs:
             build/car.txt
             build/spare_parts_car.txt
           retention-days: 1
+
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
 
   build_motorbike:
     needs: start
@@ -83,6 +96,10 @@ jobs:
             build/spare_parts_motorbike.txt
           retention-days: 1
 
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
+
   build_truck:
     needs: start
     runs-on: ubuntu-latest
@@ -110,6 +127,10 @@ jobs:
             build/truck.txt
             build/spare_parts_truck.txt
           retention-days: 1
+
+      - name: Print assembly plant
+        run: |
+          echo "Assembling at: $ASSEMBLY_PLANT"
 
   test_car:
     needs: build_car
@@ -202,6 +223,14 @@ jobs:
           echo "| Motorbike | motorbike.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
           echo "| Truck | truck.txt | ✅ Present |" >> $GITHUB_STEP_SUMMARY
 
+      - name: Print run metadata
+        run: |
+          echo "Workflow: ${{ github.workflow }}"
+          echo "Run number: ${{ github.run_number }}"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Event: ${{ github.event_name }}"
+
   deploy_car:
     needs: test_car
     runs-on: ubuntu-latest
@@ -211,6 +240,13 @@ jobs:
         with:
           name: car-files
           path: build/
+
+      - name: Authenticate deployment
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Authenticating with token: $TOKEN"
+          echo "Token length: ${#TOKEN}"
 
       - name: Deploy car
         run: |
@@ -246,6 +282,13 @@ jobs:
           name: motorbike-files
           path: build/
 
+      - name: Authenticate deployment
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Authenticating with token: $TOKEN"
+          echo "Token length: ${#TOKEN}"
+
       - name: Deploy motorbike
         run: |
           echo "Deploying motorbike to production"
@@ -279,6 +322,13 @@ jobs:
         with:
           name: truck-files
           path: build/
+
+      - name: Authenticate deployment
+        env:
+          TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Authenticating with token: $TOKEN"
+          echo "Token length: ${#TOKEN}"
 
       - name: Deploy truck
         run: |
